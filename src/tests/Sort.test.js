@@ -7,7 +7,7 @@ describe('Inventory Sorting', () => {
         await app.login.performLogin('standard_user', 'secret_sauce');
     });
 
-    it('should sort items by name (A to Z)', async () => {
+    it('should sort items by name (Z to A)', async () => {
         await app.inventory.navigate();
 
         const inventoryItems = await app.inventory.inventoryItems;
@@ -27,7 +27,7 @@ describe('Inventory Sorting', () => {
         if (!await sortDropdown.isDisplayed()) {
             throw new Error('No inventory items found on the page');
         }
-        await sortDropdown.selectByAttribute('value', 'az');
+        await sortDropdown.selectByAttribute('value', 'za');
 
         const sortedNames = [];
         for (const item of inventoryItems) {
