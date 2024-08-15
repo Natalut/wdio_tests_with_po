@@ -1,5 +1,5 @@
 const { BasePage } = require('./Base.page');
-
+const credentials = require('./credentials')
 class LoginPage extends BasePage {
     get usernameInput() {
         return $('#user-name');
@@ -13,7 +13,7 @@ class LoginPage extends BasePage {
         return $('#login-button');
     }
 
-    async performLogin(username, password) {
+    async performLogin(username=credentials.username, password=credentials.password) {
         await this.usernameInput.setValue(username);
         await this.passwordInput.setValue(password);
         await this.loginButton.click();
