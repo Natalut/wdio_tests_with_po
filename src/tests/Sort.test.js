@@ -10,9 +10,7 @@ describe('Inventory Sorting', () => {
         await app.inventory.navigate();
 
         const inventoryItems = await app.inventory.inventoryItems;
-        if (!inventoryItems.length) {
-            throw new Error('No inventory items found on the page');
-        }
+        expect(inventoryItems.length).toBeGreaterThan(0);
 
         const initialNames = [];
         for (const item of inventoryItems) {
@@ -23,13 +21,12 @@ describe('Inventory Sorting', () => {
         console.log('Initial names:', initialNames);
 
         const sortDropdown = await app.inventory.sortDropdown;
-        if (!await sortDropdown.isDisplayed()) {
-            throw new Error('Sort dropdown is not displayed');
-        }
+        expect(await sortDropdown.isDisplayed()).toBe(true);
         await sortDropdown.selectByAttribute('value', 'za');
 
+        const updatedInventoryItems = await app.inventory.inventoryItems;
         const sortedNames = [];
-        for (const item of inventoryItems) {
+        for (const item of updatedInventoryItems) {
             const itemName = await app.inventory.getItemName(item).getText();
             sortedNames.push(itemName);
         }
@@ -37,7 +34,8 @@ describe('Inventory Sorting', () => {
         console.log('Sorted names:', sortedNames);
 
         const expectedSortedNames = [...initialNames].sort().reverse();
-
         console.log('Expected Sorted Names:', expectedSortedNames);
 
-    })})
+        expect(sortedNames).toEqual(expectedSortedNames);
+    });
+});
