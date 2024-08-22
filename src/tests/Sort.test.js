@@ -1,4 +1,7 @@
 const { app } = require('../pages/Application'); 
+const {sortByName} = require('../helpers/sorting.helper')
+const {sortingOption} = require('../helpers/sortingOptions')
+
 
 describe('Inventory Sorting', () => {
     before(async () => {
@@ -9,33 +12,14 @@ describe('Inventory Sorting', () => {
     it('should sort items by name (Z to A)', async () => {
         await app.inventory.navigate();
 
-        const inventoryItems = await app.inventory.inventoryItems;
-        expect(inventoryItems.length).toBeGreaterThan(0);
+        const initialNames = await app.inventory.getInventoryItemsNames();
+        const expectedSortedOrder = sortByName(initialNames, sortingOption.nameZA)
+        
+        await app.inventory.sortBy(sortingOption.nameZA)
 
-        const initialNames = [];
-        for (const item of inventoryItems) {
-            const itemName = await app.inventory.getItemName(item).getText();
-            initialNames.push(itemName);
-        }
+        const sortedItems = await app.inventory.getInventoryItemsNames();
 
-        console.log('Initial names:', initialNames);
-
-        const sortDropdown = await app.inventory.sortDropdown;
-        expect(await sortDropdown.isDisplayed()).toBe(true);
-        await sortDropdown.selectByAttribute('value', 'za');
-
-        const updatedInventoryItems = await app.inventory.inventoryItems;
-        const sortedNames = [];
-        for (const item of updatedInventoryItems) {
-            const itemName = await app.inventory.getItemName(item).getText();
-            sortedNames.push(itemName);
-        }
-
-        console.log('Sorted names:', sortedNames);
-
-        const expectedSortedNames = [...initialNames].sort().reverse();
-        console.log('Expected Sorted Names:', expectedSortedNames);
-
-        expect(sortedNames).toEqual(expectedSortedNames);
+        expect(sortedItems.length).toBeGreaterThan(0);
+        expect(sortedItems).toEqual(expectedSortedOrder);
     });
 });

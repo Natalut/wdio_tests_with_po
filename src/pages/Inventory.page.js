@@ -24,37 +24,17 @@ class InventoryPage extends BaseSwagLabPage {
         return parseFloat(priceText.replace('$', ''));
     }
 
-    async getSortedItems(option) {
-        const inventoryItems = await this.inventoryItems;
-
-        if (!inventoryItems.length) {
-            throw new Error('No inventory items found on the page');
-        }
-
-        const itemNames = [];
-        const itemPrices = [];
-
-        for (const item of inventoryItems) {
+    async getInventoryItemsNames(){
+        const names = [];
+        for await (const item of this.inventoryItems) {
             const itemName = await this.getItemName(item).getText();
-            itemNames.push(itemName);
-
-            const itemPrice = await this.getItemPrices(item);
-            itemPrices.push(itemPrice);
+            names.push(itemName);
+        }
+        return names
         }
 
-        switch (option) {
-            case 'az':
-                return itemNames.sort();
-            case 'za':
-                return itemNames.sort().reverse();
-            case 'lohi':
-                return itemPrices.sort((a, b) => a - b);
-            case 'hilo':
-                return itemPrices.sort((a, b) => b - a);
-            default:
-                throw new Error('Invalid sorting option');
+        async sortBy(option) {
+            await this.sortDropdown.selectByAttribute('value', option);
         }
     }
-}
-
 module.exports = { InventoryPage };
